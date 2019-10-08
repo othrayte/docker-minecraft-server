@@ -4,6 +4,19 @@
 DEFAULT_JVM_XMX=1G
 DEFAULT_JVM_XMS=1G
 
+if [ ! -z "$MIGRATE" ]
+then
+	echo " **********************"
+	echo " *  MIGRATING SERVER  *"
+	echo " **********************"
+    if [ -d "world" ]; then
+        echo "Error: Migration requested but target already contains a world!"
+        exit 1
+    fi
+    cp -R "$MIGRATE/world" ./world
+    cp "$MIGRATE/eula.txt" "$MIGRATE/server.properties" "$MIGRATE/whitelist.json" "$MIGRATE/banned-ips.json" "$MIGRATE/banned-players.json" "$MIGRATE/ops.json" ./
+fi
+
 if [ ! -z "$MODPACK" ]
 then
     CONFIG_URL=https://raw.githubusercontent.com/othrayte/docker-minecraft-server/master/modpacks/$MODPACK.config

@@ -10,4 +10,4 @@ If you want to keep your server around it is advised that you additionally mount
 `docker volume create minecraft-server-vol`
 
 2. Start the container  
-`docker run -p --mount source=minecraft-server-vol,target=/server -e EULA=TRUE -p 25565:25565 othrayte/minecraft-server`
+`docker run --mount source=minecraft-server-vol,target=/server -e EULA=TRUE -p 25565:25565 othrayte/minecraft-server`
