@@ -1,4 +1,30 @@
-#! /bin/sh
+#! /bin/bash
+
+# Defaults
+DEFAULT_JVM_XMX=1G
+DEFAULT_JVM_XMS=1G
+
+if [ ! -z "$MODPACK" ]
+then
+    CONFIG_URL=https://raw.githubusercontent.com/othrayte/docker-minecraft-server/master/modpacks/$MODPACK.config
+fi
+
+if [ ! -z "$CONFIG_URL" ]
+then
+    CONFIG=$(curl -s $CONFIG_URL)
+    echo -e "Using the following configuration:\n$CONFIG\n\n"
+    eval "$CONFIG"
+fi
+
+if [ -z "$MODPACK_URL" ] &&  [ ! -z "${CURSEFORGE_PROJECTID}" ] && [ ! -z "${CURSEFORGE_FILEID}" ]
+then
+    MODPACK_URL=$(curl https://addons-ecs.forgesvc.net/api/v2/addon/${CURSEFORGE_PROJECTID}/file/${CURSEFORGE_FILEID}/download-url)
+fi
+
+if [ -z "$FORGE_URL" ] &&  [ ! -z "${MINECRAFT_VER}" ] && [ ! -z "${FORGE_VER}" ]
+then
+    FORGE_URL=https://files.minecraftforge.net/maven/net/minecraftforge/forge/${MINECRAFT_VER}-${FORGE_VER}/forge-${MINECRAFT_VER}-${FORGE_VER}-installer.jar
+fi
 
 # Check EULA
 if [ ! -e eula.txt ]; then
@@ -13,28 +39,28 @@ if [ ! -e eula.txt ]; then
 fi
 
 # Get Forge
-if [ ! -f "forge-server.jar" ]; then
+if [ ! -z "$FORGE_URL" ] && [ ! -f "forge-server.jar" ]; then
 	echo " **********************"
 	echo " *  INSTALLING FORGE  *"
 	echo " **********************"
-    wget https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.12.2-14.23.5.2838/forge-1.12.2-14.23.5.2838-installer.jar -O forge-installer.jar
+    wget "$FORGE_URL" -O forge-installer.jar
     java -jar forge-installer.jar --installServer
     rm forge-installer.jar
-    mv forge-1.12.*-universal.jar forge-server.jar
+    mv forge-*-universal.jar forge-server.jar
 fi
 
-# Get RLCraft
-if [ ! -d "mods" ]; then
+# Get Modpack
+if [ ! -z "$MODPACK_URL" ] && [ ! -d "mods" ]; then
 	echo " ************************"
-	echo " *  INSTALLING RLCraft  *"
+	echo " *  INSTALLING Modpack  *"
 	echo " ************************"
-	wget https://media.forgecdn.net/files/2791/783/RLCraft+Server+Pack+1.12.2+-+Beta+v2.6.3.zip -O rlcraft.zip
-	unzip rlcraft.zip -d ziptmp
+	wget "$MODPACK_URL" -O modpack.zip
+	unzip modpack.zip -d ziptmp
 	mv ziptmp/*/* .
-	rm -rf ziptmp rlcraft.zip
+	rm -rf ziptmp modpack.zip
 fi
 
-echo " **********************"
-echo " *  STARTING RLCraft  *"
-echo " **********************"
-java -Xmx${JVM_XMX:-4G}  -Xms${JVM_XMS:-4G} -jar forge-server.jar nogui
+echo " ************************"
+echo " *  STARTING Minecraft  *"
+echo " ************************"
+java -Xmx${JVM_XMX:-$DEFAULT_JVM_XMX} -Xms${JVM_XMS:-$DEFAULT_JVM_XMS} -jar forge-server.jar nogui
