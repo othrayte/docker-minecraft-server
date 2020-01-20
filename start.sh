@@ -3,6 +3,7 @@
 # Defaults
 DEFAULT_JVM_XMX=1G
 DEFAULT_JVM_XMS=1G
+MODPACK_ZIP_ROOT=/
 
 if [ ! -z "$MIGRATE" ]
 then
@@ -69,7 +70,7 @@ if [ ! -z "$MODPACK_URL" ] && [ ! -d "mods" ]; then
 	echo " ************************"
 	wget "$MODPACK_URL" -O modpack.zip
 	unzip modpack.zip -d ziptmp
-	mv ziptmp/*/* .
+	mv ziptmp/$MODPACK_ZIP_ROOT/* .
 	rm -rf ziptmp modpack.zip
 fi
 
