@@ -41,7 +41,7 @@ then
 fi
 
 # Check EULA
-if [ ! -e eula.txt ]; then
+if [ ! -f eula.txt ]; then
     if [ "$EULA" != "" ]; then
         echo "# Generated via Docker on $(date)" > eula.txt
         echo "eula=$EULA" >> eula.txt
@@ -77,4 +77,8 @@ fi
 echo " ************************"
 echo " *  STARTING Minecraft  *"
 echo " ************************"
-java -Xmx${JVM_XMX:-$DEFAULT_JVM_XMX} -Xms${JVM_XMS:-$DEFAULT_JVM_XMS} -jar forge-server.jar nogui
+if [ -f forge-server.jar ]; then
+    java -Xmx${JVM_XMX:-$DEFAULT_JVM_XMX} -Xms${JVM_XMS:-$DEFAULT_JVM_XMS} -jar forge-server.jar nogui
+else
+    java -Xmx${JVM_XMX:-$DEFAULT_JVM_XMX} -Xms${JVM_XMS:-$DEFAULT_JVM_XMS} -jar minecraft_server.$MINECRAFT_VER.jar nogui
+fi
