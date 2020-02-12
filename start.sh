@@ -52,15 +52,26 @@ if [ ! -f eula.txt ]; then
     fi
 fi
 
-# Get Forge
-if [ ! -z "$FORGE_URL" ] && [ ! -f "forge-server.jar" ]; then
-	echo " **********************"
-	echo " *  INSTALLING FORGE  *"
-	echo " **********************"
-    wget "$FORGE_URL" -O forge-installer.jar
-    java -jar forge-installer.jar --installServer
-    rm forge-installer.jar
-    mv forge-*-universal.jar forge-server.jar
+if [ ! -f "dms_server.jar" ]; then
+    # Get Forge
+    if [ ! -z "$FORGE_URL" ]; then
+        echo " **********************"
+        echo " *  INSTALLING FORGE  *"
+        echo " **********************"
+        wget "$FORGE_URL" -O forge-installer.jar
+        java -jar forge-installer.jar --installServer
+        rm forge-installer.jar
+        ln -s forge-*-universal.jar dms_server.jar
+    fi
+    
+    # Get Minecraft (vanilla)
+    if [ ! -z "$MINECRAFT_SERVER_URL" ]; then
+        echo " *******************************"
+        echo " *  INSTALLING VANILLA SERVER  *"
+        echo " *******************************"
+        wget "$MINECRAFT_SERVER_URL" -O minecraft_server.jar
+        ln -s minecraft_server.jar dms_server.jar
+    fi
 fi
 
 # Get Modpack
@@ -77,8 +88,4 @@ fi
 echo " ************************"
 echo " *  STARTING Minecraft  *"
 echo " ************************"
-if [ -f forge-server.jar ]; then
-    java -Xmx${JVM_XMX:-$DEFAULT_JVM_XMX} -Xms${JVM_XMS:-$DEFAULT_JVM_XMS} -jar forge-server.jar nogui
-else
-    java -Xmx${JVM_XMX:-$DEFAULT_JVM_XMX} -Xms${JVM_XMS:-$DEFAULT_JVM_XMS} -jar minecraft_server.$MINECRAFT_VER.jar nogui
-fi
+java -Xmx${JVM_XMX:-$DEFAULT_JVM_XMX} -Xms${JVM_XMS:-$DEFAULT_JVM_XMS} -jar dms_server.jar nogui
