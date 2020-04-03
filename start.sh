@@ -76,13 +76,20 @@ fi
 
 # Get Modpack
 if [ ! -z "$MODPACK_URL" ] && [ ! -d "mods" ]; then
-	echo " ************************"
-	echo " *  INSTALLING Modpack  *"
-	echo " ************************"
-	wget "$MODPACK_URL" -O modpack.zip
-	unzip modpack.zip -d ziptmp
-	mv ziptmp/$MODPACK_ZIP_ROOT/* .
-	rm -rf ziptmp modpack.zip
+    echo " ************************"
+    echo " *  INSTALLING Modpack  *"
+    echo " ************************"
+    wget "$MODPACK_URL" -O modpack.zip
+    unzip modpack.zip -d ziptmp
+    mv ziptmp/$MODPACK_ZIP_ROOT/* .
+    rm -rf ziptmp modpack.zip
+fi
+
+# Get additional mods
+if [ ! -z "$ADDITIONAL_MODS" ]; then
+    for mod in $ADDITIONAL_MODS; do
+        wget $mod --no-clobber -P ./mods
+    done
 fi
 
 echo " ************************"
