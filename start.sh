@@ -87,6 +87,9 @@ fi
 
 # Get additional mods
 if [ ! -z "$ADDITIONAL_MODS" ]; then
+    echo " *****************"
+    echo " *  ADDING Mods  *"
+    echo " *****************"
     for mod in $ADDITIONAL_MODS; do
         wget $mod --no-clobber -P ./mods
     done
