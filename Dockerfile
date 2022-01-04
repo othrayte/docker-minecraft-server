@@ -1,4 +1,4 @@
-FROM openjdk:8-alpine
+FROM openjdk:18-alpine
 
 RUN addgroup app && adduser -S -G app app
 
