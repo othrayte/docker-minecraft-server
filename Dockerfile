@@ -1,6 +1,8 @@
-FROM openjdk:8
+FROM openjdk:8-alpine
 
-RUN adduser --system --group app
+RUN addgroup app && adduser -S -G app app
+
+RUN apk --no-cache add zip curl
 
 COPY ./start.sh /
 

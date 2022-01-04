@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 
 # Defaults
 DEFAULT_JVM_XMX=1G
@@ -94,6 +94,23 @@ if [ ! -z "$ADDITIONAL_MODS" ]; then
         wget $mod --no-clobber -P ./mods
     done
 fi
+
+find . -type f -name '*.jar' |
+while read LINE; do
+    JAR_SEARCH_RES=$(zip -sf -q -d "$LINE" org/apache/logging/log4j/core/lookup/JndiLookup.class)
+    if [ "$JAR_SEARCH_RES" != "Total 0 entries (0 bytes)" ]; then
+        if [ -z "$SECURITY_MSG_SHOWN" ]; then
+            echo " *****************************"
+            echo " *     SECURITY CHANGES      *"
+            echo " * REMOVING Log4J JndiLookup *"
+            echo " * to mitigate Log4Shell etc *"
+            echo " *****************************"
+            SECURITY_MSG_SHOWN=1
+        fi
+        echo "Removing JndiLookup.class from $LINE"
+        zip -q -d "$LINE" org/apache/logging/log4j/core/lookup/JndiLookup.class
+    fi
+done
 
 echo " ************************"
 echo " *  STARTING Minecraft  *"
