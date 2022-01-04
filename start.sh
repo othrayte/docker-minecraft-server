@@ -95,6 +95,13 @@ if [ ! -z "$ADDITIONAL_MODS" ]; then
     done
 fi
 
+echo " *****************************"
+echo " *     SECURITY CHANGES      *"
+echo " * REMOVING Log4J JndiLookup *"
+echo " * to mitigate Log4Shell etc *"
+echo " *****************************"
+zip -q -d **/*.jar org/apache/logging/log4j/core/lookup/JndiLookup.class 
+
 echo " ************************"
 echo " *  STARTING Minecraft  *"
 echo " ************************"
