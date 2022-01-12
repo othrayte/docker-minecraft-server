@@ -61,7 +61,13 @@ if [ ! -f "dms_server.jar" ]; then
         wget "$FORGE_URL" -O forge-installer.jar
         java -jar forge-installer.jar --installServer
         rm forge-installer.jar
-        ln -s forge-*-universal.jar dms_server.jar
+
+        if [ -z "$FORGE_JAR" ]
+        then
+            FORGE_JAR=forge-*-universal.jar
+        fi
+
+        ln -s $FORGE_JAR dms_server.jar
     fi
     
     # Get Minecraft (vanilla)
